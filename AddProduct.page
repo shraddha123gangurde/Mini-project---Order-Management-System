@@ -1,0 +1,107 @@
+<apex:page standardController="Opportunity" action="{!onPageLoad}"
+    extensions="AddProductExtention" sidebar="false" id="page1">
+    <apex:form id="formId">
+        <apex:outputpanel id="addALI" >
+            <apex:pageBlock title="Add Line Items" id="theblock" rendered="{!displayaddALI == true}">
+                <apex:pageBlockTable value="{!listWrapper}" var="item">
+                    <apex:column headerValue="product Name"
+                        value="{!item.strOpportunityProducts}" />
+                    <apex:column headerValue="Quantity">
+                        <apex:inputField value="{!item.objOpportunityLineItems.Quantity}"/>
+                    </apex:column>
+                    <apex:column headerValue="Discount">
+                        <apex:inputField value="{!item.objOpportunityLineItems.Discount}" />
+                    </apex:column>
+                    <apex:column headerValue="List Price">
+                        <apex:inputField value="{!item.objOpportunityLineItems.unitPrice}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:pageBlockbuttons location="bottom">
+                    <apex:commandButton value="Save" id="save"
+                        action="{!saveOpportunityLineItem}" status="actStatusId"/>
+                        <apex:actionStatus id="actStatusId" >
+                            <apex:facet name="start" >
+                                <apex:image url="{!$Resource.ActionStatusSpinner}" width="30" height="30"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    <apex:commandButton value="Generate Quote"
+                        action="{!generateQuote}" rerender="none" status="actStatusId"/>
+                </apex:pageBlockbuttons>
+            </apex:pageBlock>
+        </apex:outputpanel>
+
+        <apex:outputpanel id="addProducts">
+            <apex:pageBlock title="Add Products" id="details">
+                <center>
+                    <apex:inputText value="{!ProductName}" id="ProductName" />
+                    <apex:commandButton value="Search" action="{!searchProduct}"
+                        rerender="details" status="actStatusId"/>
+                </center>
+                <apex:pageBlockTable value="{!listPricebookEntries}" var="item"
+                    onRowClick="deleteRow(this);">
+                    <apex:column id="nameopp" headerValue="product Name"
+                        value="{!item.Name}" />
+                    <apex:column headerValue="product Code" value="{!item.ProductCode}" />
+                    <apex:column headerValue="product Price" value="{!item.UnitPrice}" />
+                    <apex:column >
+                        <apex:commandButton value="Select" id="SelectButton"
+                            onclick="createOppLineItem('{!item.Name}')" rerender="none" status="actStatusId"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:actionFunction name="createOppLineItem"
+                    action="{!createOppLineItem}" rerender="addALI,abc">
+                    <apex:param name="firstParam" value=""
+                        assignTo="{!stringProductName}" />
+                </apex:actionFunction>
+                <apex:pageblockButtons location="bottom">
+                    <apex:commandButton value="First Page" rerender="details"
+                        action="{!FirstPage}" disabled="{!prev}" status="actStatusId"/>
+                    <apex:commandButton value="Previous" rerender="details"
+                        action="{!previous}" disabled="{!prev}" status="actStatusId"/>
+                    <apex:commandButton value="Next" rerender="details"
+                        action="{!next}" disabled="{!nxt}" status="actStatusId"/>
+                    <apex:commandButton value="Last Page" rerender="details"
+                        action="{!LastPage}" disabled="{!nxt}" status="actStatusId"/>
+                </apex:pageblockButtons>
+            </apex:pageBlock>
+        </apex:outputpanel>
+        
+        <apex:outputpanel id="OppOrders">
+            <apex:pageBlock title="Orders" id="Orders">
+                <center>
+                    <apex:inputText value="{!OrderNumber}" id="OrderNumber" />
+                    <apex:commandButton value="Search" action="{!searchOrder}"
+                        rerender="OppOrders" status="actStatusId"/>
+                </center>
+                <apex:pageBlockTable value="{!listOrders}" var="item">
+                    <apex:column headerValue="Order Number" value="{!item.OrderNumber}" />
+                    <apex:column headerValue="Status" value="{!item.Status}" />
+                    <apex:column headerValue="Total Amount" value="{!item.TotalAmount}" />
+                    <apex:column >
+                        <apex:commandlink value="Edit" id="EditButton" 
+                        rerender="formId" onclick="window.open('/{!item.id}')">
+                        <apex:param name="OrderId" value="{!item.id}" assignTo="{!idOrder}" />
+                        </apex:commandlink>
+                    </apex:column>
+                    <apex:column >
+                        <apex:commandlink value="Delete" id="DeleteButton"
+                        action="{!deleteOrder}" rerender="OppOrders,Orders">
+                         <apex:param name="OrderId" value="{!item.id}" assignTo="{!idOrder}" />
+                        </apex:commandlink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </apex:form>
+    <!-- Javascript starts here -->
+    <Script>
+    function deleteRow(tr) {
+    tr.remove();
+    }
+    function enableSave(event) {
+    event.preventDefault();
+    document.getElementById('{!$Component.page1.formId.addALI.theblock.save}').disabled = false;
+    }
+    </Script>
+    <!-- javascript ends here -->
+</apex:page>

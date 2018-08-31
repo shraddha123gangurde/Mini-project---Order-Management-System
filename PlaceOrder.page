@@ -1,0 +1,28 @@
+<apex:page standardController="Order" sidebar="false" extensions="PlaceOrderExtension">
+<apex:form >
+    <apex:actionStatus id="actStatusId" >
+	    <apex:facet name="start" >
+	       <apex:image url="{!$Resource.ActionStatusSpinner}" width="30" height="30"/>
+	    </apex:facet>
+    </apex:actionStatus>
+    <apex:pageBlock title="Place Order">
+     <apex:pageBlockSection >
+           <apex:inputField value="{!Order.AccountId}" id="Account"/>
+           <apex:inputField value="{!Order.ContractId}" id="Contract"/>
+           <apex:inputField value="{!Order.EffectiveDate}" id="EffectiveDate"/>
+           <apex:inputField value="{!Order.Status}" id="Status"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection title="Address Information">
+           <apex:inputField value="{!Order.ShippingCity}" id="ShippingCity"/>
+           <apex:inputField value="{!Order.ShippingState}" id="ShippingState"/>
+           <apex:inputField value="{!Order.ShippingCountry}" id="ShippingCountry"/>
+           <apex:inputField value="{!Order.BillingCity}" id="BillingCity"/>
+           <apex:inputField value="{!Order.BillingState}" id="BillingState"/>
+           <apex:inputField value="{!Order.BillingCountry}" id="BillingCountry"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockbuttons >
+        <apex:commandButton value="Save" action="{!saveOrderItem}" status="actStatusId"/>
+    </apex:pageBlockbuttons>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>
